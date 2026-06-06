@@ -32,7 +32,7 @@ export function RoastMeme({ idea, verdict }: { idea: string; verdict: string }) 
       } catch (err) {
         console.error("Meme generation error:", err);
         if (isMounted) {
-          setError("Failed to generate meme. The AI might be too tired.");
+          setError("Failed to fetch meme.");
         }
       } finally {
         if (isMounted) {
@@ -60,7 +60,7 @@ export function RoastMeme({ idea, verdict }: { idea: string; verdict: string }) 
         {isLoading && (
           <div className="flex flex-col items-center justify-center gap-4 p-8 text-muted-foreground">
             <Loader2 className="h-8 w-8 animate-spin" />
-            <p>DALL-E 3 is drawing a meme...</p>
+            <p>Fetching a random meme...</p>
           </div>
         )}
         

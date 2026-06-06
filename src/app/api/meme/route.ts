@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 
-const openai = new OpenAI();
-
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
@@ -13,26 +10,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Startup idea is required" }, { status: 400 });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({ error: "OPENAI_API_KEY is missing" }, { status: 500 });
+    // Fetch a random tech/startup-related meme since the OpenAI API key lacks DALL-E access
+    const res = await fetch("https://meme-api.com/gimme/ProgrammerHumor");
+    
+    if (!res.ok) {
+      throw new Error(`Meme API responded with status ${res.status}`);
     }
 
-    const prompt = `Create a funny, satirical meme image about this startup idea: "${idea}". The final verdict on this idea was: "${verdict}". Make it look like a classic internet meme style. Do not include too much text, focus on the visual humor.`;
-
-    const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: prompt,
-      n: 1,
-      size: "1024x1024",
-    });
-
-    const imageUrl = response.data[0].url;
-
-    return NextResponse.json({ url: imageUrl });
+    const data = await res.json();
+    
+    return NextResponse.json({ url: data.url });
   } catch (error) {
     console.error("Meme generation error:", error);
     return NextResponse.json(
-      { error: "Internal server error generating meme" },
+      { error: "Internal server error fetching meme" },
       { status: 500 }
     );
   }
