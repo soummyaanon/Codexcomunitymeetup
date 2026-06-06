@@ -45,7 +45,7 @@ export function StartupForm({ busy, onSubmit }: StartupFormProps) {
           type="submit"
           size="lg"
           disabled={busy || !idea.trim()}
-          className="h-14 gap-2 px-8 font-display text-lg tracking-wide uppercase shadow-[0_18px_48px_-24px_var(--ember)]"
+          className="h-14 gap-2 px-8 font-display text-lg shadow-[0_18px_48px_-24px_var(--ember)]"
         >
           {busy ? <Sparkles className="size-4 animate-spin" /> : <Flame className="size-4" />}
           {busy ? "Roasting…" : "Roast it"}

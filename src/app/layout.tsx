@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Anton, Schibsted_Grotesk } from "next/font/google";
+import { Alfa_Slab_One, Spline_Sans } from "next/font/google";
 import "./globals.css";
 
-const display = Anton({
+/* Showbill slab for the marquee, crisp grotesque for the roast copy. */
+const display = Alfa_Slab_One({
   weight: "400",
   variable: "--font-display",
   subsets: ["latin"],
 });
 
-const body = Schibsted_Grotesk({
+const body = Spline_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
 });

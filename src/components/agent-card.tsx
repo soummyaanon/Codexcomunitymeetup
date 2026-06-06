@@ -16,6 +16,7 @@ interface AgentCardProps {
   persona: AgentPersona;
   state: PanelistState;
   headliner?: boolean;
+  className?: string;
 }
 
 function StatusBadge({ status }: { status: PanelistState["status"] }) {
@@ -58,18 +59,24 @@ function ThinkingDots() {
   );
 }
 
-export function AgentCard({ persona, state, headliner = false }: AgentCardProps) {
+export function AgentCard({
+  persona,
+  state,
+  headliner = false,
+  className,
+}: AgentCardProps) {
   const { status, text, error } = state;
   const streaming = status === "streaming";
 
   return (
     <article
       className={cn(
-        "group relative flex min-h-44 flex-col gap-4 overflow-hidden rounded-lg border bg-card/82 p-5 shadow-[0_24px_80px_-62px_var(--glow)] backdrop-blur transition-all duration-300",
+        "group relative flex min-h-44 flex-col gap-4 overflow-hidden rounded-lg border bg-card/82 p-4 shadow-[0_24px_80px_-62px_var(--glow)] backdrop-blur transition-all duration-300 sm:min-h-52 sm:p-5",
         "before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[var(--glow)] before:to-transparent before:opacity-55",
         status === "idle" && "opacity-60",
         streaming && "glow-streaming border-transparent bg-card",
-        headliner && "min-h-52 p-6 sm:p-8",
+        headliner && "min-h-52 p-5 sm:min-h-60 sm:p-6 md:p-8",
+        className,
       )}
       style={
         {
@@ -79,30 +86,34 @@ export function AgentCard({ persona, state, headliner = false }: AgentCardProps)
       }
     >
       <header className="relative flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <span
             className={cn(
-              "grid size-10 place-items-center rounded-lg border border-border/70 bg-secondary/50 text-2xl shadow-inner shadow-white/5",
-              headliner && "size-12 text-3xl",
+              "grid size-9 shrink-0 place-items-center rounded-lg border border-border/70 bg-secondary/50 text-xl shadow-inner shadow-white/5 sm:size-10 sm:text-2xl",
+              headliner && "size-11 text-2xl sm:size-12 sm:text-3xl",
             )}
             aria-hidden
           >
             {persona.emoji}
           </span>
-          <div>
+          <div className="min-w-0">
             <h3
               className={cn(
-                "font-display tracking-wide uppercase",
-                headliner ? "text-2xl" : "text-lg",
+                "font-display",
+                headliner ? "text-xl sm:text-2xl" : "text-base sm:text-lg",
               )}
               style={{ color: persona.accent }}
             >
               {persona.title}
             </h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">{persona.role}</p>
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
+              {persona.role}
+            </p>
           </div>
         </div>
-        <StatusBadge status={status} />
+        <span className="shrink-0">
+          <StatusBadge status={status} />
+        </span>
       </header>
 
       {status === "idle" && (
