@@ -18,12 +18,14 @@ export function RoastReport({ verdict }: RoastReportProps) {
         The judge has ruled
       </p>
 
-      <div className="mt-4 grid items-center gap-8 rounded-lg border bg-card/80 p-6 sm:p-8 md:grid-cols-[auto_1fr_auto]">
-        <div className="flex items-baseline gap-1">
+      <div className="mt-4 grid items-center gap-8 rounded-lg border border-flame/25 bg-card/85 p-6 shadow-[0_26px_90px_-62px_var(--flame)] backdrop-blur sm:p-8 md:grid-cols-[auto_1fr_auto]">
+        <div className="rounded-lg border border-border/70 bg-secondary/35 p-5">
+          <div className="flex items-baseline gap-1">
           <span className="font-display text-7xl leading-none text-flame sm:text-8xl">
             {verdict.score}
           </span>
           <span className="font-display text-2xl text-muted-foreground">/10</span>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -44,7 +46,7 @@ export function RoastReport({ verdict }: RoastReportProps) {
             aria-label="Survival chance"
           >
             <div
-              className="h-full rounded-full bg-gradient-to-r from-destructive via-ember to-flame transition-[width] duration-700 ease-out"
+              className="h-full rounded-full bg-gradient-to-r from-destructive via-ember to-flame shadow-[0_0_26px_-8px_var(--ember)] transition-[width] duration-700 ease-out"
               style={{ width: `${survival}%` }}
             />
           </div>
@@ -54,7 +56,7 @@ export function RoastReport({ verdict }: RoastReportProps) {
         </div>
 
         <div className="justify-self-center md:justify-self-end">
-          <span className="animate-stamp inline-block border-4 border-double border-destructive px-5 py-3 font-display text-2xl tracking-wider text-destructive uppercase sm:text-3xl">
+          <span className="animate-stamp inline-block rotate-[-6deg] border-4 border-double border-destructive bg-destructive/10 px-5 py-3 font-display text-2xl tracking-wider text-destructive uppercase shadow-[0_20px_55px_-36px_var(--destructive)] sm:text-3xl">
             {verdict.verdict}
           </span>
         </div>

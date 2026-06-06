@@ -59,14 +59,17 @@ export function RoastArena() {
             : null;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-5 py-10 sm:px-8 sm:py-14">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-5 py-8 sm:px-8 sm:py-12 lg:gap-10">
       {/* Poster header */}
-      <header className="animate-rise">
-        <h1 className="font-display text-[clamp(3rem,9vw,6.5rem)] leading-[0.95] tracking-wide uppercase">
+      <header className="animate-rise max-w-4xl">
+        <p className="mb-3 text-xs font-medium tracking-[0.3em] text-muted-foreground uppercase">
+          Multi-agent pitch tribunal
+        </p>
+        <h1 className="font-display text-[clamp(3rem,9vw,7.5rem)] leading-[0.9] tracking-wide uppercase text-balance">
           AI Startup
           <span className="block text-ember">Roast Night</span>
         </h1>
-        <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           Four agents walk into your pitch. None of them are kind. A judge
           decides if the idea leaves alive.
         </p>
@@ -76,22 +79,33 @@ export function RoastArena() {
 
       {/* Empty state: tonight's lineup */}
       {state.phase === "idle" && (
-        <section aria-label="Tonight's lineup" className="animate-rise">
-          <p className="text-xs font-medium tracking-[0.3em] text-muted-foreground uppercase">
-            Tonight&apos;s lineup
-          </p>
-          <ul className="mt-3 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+        <section
+          aria-label="Tonight's lineup"
+          className="animate-rise rounded-lg border bg-card/55 p-5 backdrop-blur"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-xs font-medium tracking-[0.3em] text-muted-foreground uppercase">
+              Tonight&apos;s lineup
+            </p>
+            <span className="hidden h-px flex-1 bg-gradient-to-r from-border to-transparent sm:block" />
+          </div>
+          <ul className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
             {(Object.keys(PERSONAS) as PanelistKey[]).map((key) => (
-              <li key={key} className="flex items-baseline gap-2">
-                <span aria-hidden>{PERSONAS[key].emoji}</span>
-                <span
-                  className="font-display tracking-wide uppercase"
-                  style={{ color: PERSONAS[key].accent }}
-                >
-                  {PERSONAS[key].title}
-                </span>
-                <span className="text-muted-foreground">
-                  — {PERSONAS[key].role}
+              <li
+                key={key}
+                className="flex items-center gap-3 rounded-md border border-border/60 bg-secondary/25 px-3 py-2"
+              >
+                <span className="text-lg" aria-hidden>{PERSONAS[key].emoji}</span>
+                <span className="min-w-0">
+                  <span
+                    className="block font-display tracking-wide uppercase"
+                    style={{ color: PERSONAS[key].accent }}
+                  >
+                    {PERSONAS[key].title}
+                  </span>
+                  <span className="block truncate text-muted-foreground">
+                    {PERSONAS[key].role}
+                  </span>
                 </span>
               </li>
             ))}
@@ -113,7 +127,7 @@ export function RoastArena() {
       {narration && (
         <p
           aria-live="polite"
-          className="text-sm tracking-wide text-muted-foreground"
+          className="animate-rise rounded-full border border-border/70 bg-card/50 px-4 py-2 text-sm tracking-wide text-muted-foreground backdrop-blur"
         >
           {narration}
         </p>
@@ -123,9 +137,12 @@ export function RoastArena() {
       {state.triage && (
         <section
           aria-label="Analyst summary"
-          className="animate-rise border-l-2 border-ember pl-4"
+          className="animate-rise rounded-lg border border-ember/35 bg-card/65 p-5 shadow-[0_24px_80px_-62px_var(--ember)] backdrop-blur"
         >
-          <dl className="grid gap-x-8 gap-y-1 text-sm sm:grid-cols-3">
+          <p className="mb-4 text-xs font-medium tracking-[0.3em] text-ember uppercase">
+            Analyst dossier
+          </p>
+          <dl className="grid gap-x-8 gap-y-4 text-sm sm:grid-cols-3">
             <div>
               <dt className="text-xs tracking-widest text-muted-foreground uppercase">
                 Product
@@ -145,7 +162,7 @@ export function RoastArena() {
               <dd>{state.triage.businessModel}</dd>
             </div>
           </dl>
-          <p className="mt-2 text-sm text-foreground/75 italic">
+          <p className="mt-4 border-t border-border/60 pt-4 text-sm text-foreground/75 italic">
             “{state.triage.summary}”
           </p>
         </section>
