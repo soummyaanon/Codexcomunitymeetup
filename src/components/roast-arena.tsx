@@ -3,7 +3,7 @@
 import { AgentCard, type AgentPersona } from "@/components/agent-card";
 import { RoastReport } from "@/components/roast-report";
 import { StartupForm } from "@/components/startup-form";
-import { useRoast, type Phase } from "@/hooks/use-roast";
+import { useRoast, useStagedReveal } from "@/hooks/use-roast";
 import type { PanelistKey } from "@/types/report";
 
 const PERSONAS: Record<PanelistKey, AgentPersona> = {
@@ -11,56 +11,58 @@ const PERSONAS: Record<PanelistKey, AgentPersona> = {
     title: "The Investor",
     role: "Ruthless VC, allergic to small TAMs",
     emoji: "💰",
-    accent: "oklch(0.78 0.13 85)",
+    accent: "oklch(0.84 0.095 238)",
     thinkingLine: "Counting your TAM on one hand",
   },
   customer: {
     title: "The Customer",
     role: "Allegedly your user",
     emoji: "🛒",
-    accent: "oklch(0.72 0.15 25)",
+    accent: "oklch(0.74 0.13 258)",
     thinkingLine: "Checking their wallet",
   },
   competitor: {
     title: "The Competitor",
     role: "Already shipped your roadmap",
     emoji: "🦈",
-    accent: "oklch(0.62 0.1 55)",
+    accent: "oklch(0.66 0.16 277)",
     thinkingLine: "Sharpening the knives",
   },
   roast: {
     title: "The Roast",
     role: "Tonight's headliner",
     emoji: "🔥",
-    accent: "oklch(0.7 0.18 40)",
+    accent: "oklch(0.63 0.18 244)",
     thinkingLine: "Cooking",
   },
 };
 
 const OPENING_ACTS: PanelistKey[] = ["investor", "customer", "competitor"];
 
-const NARRATION: Partial<Record<Phase, string>> = {
-  triage: "The analyst is reading your pitch…",
-  panel: "The panel has the mic.",
-  judging: "The judge is deliberating…",
-};
-
 export function RoastArena() {
   const { state, start, reset } = useRoast();
-  const busy = !["idle", "done", "error"].includes(state.phase);
+  const { displayed, revealDone } = useStagedReveal(state);
+
   const showPanel = state.phase !== "idle";
+  const showVerdict = Boolean(state.verdict) && revealDone;
+  const busy = !["idle", "error"].includes(state.phase) && !showVerdict;
+
+  const narration =
+    state.phase === "triage"
+      ? "The analyst is reading your pitch…"
+      : state.phase === "error"
+        ? null
+        : showPanel && !revealDone
+          ? "The panel has the mic."
+          : showPanel && !showVerdict
+            ? "The judge is deliberating…"
+            : null;
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-5 py-10 sm:px-8 sm:py-14">
       {/* Poster header */}
       <header className="animate-rise">
-        <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-destructive ember-dot" />
-          <span className="text-xs font-medium tracking-[0.3em] text-muted-foreground uppercase">
-            Live from the meetup
-          </span>
-        </div>
-        <h1 className="mt-3 font-display text-[clamp(3rem,9vw,6.5rem)] leading-[0.95] tracking-wide uppercase">
+        <h1 className="font-display text-[clamp(3rem,9vw,6.5rem)] leading-[0.95] tracking-wide uppercase">
           AI Startup
           <span className="block text-ember">Roast Night</span>
         </h1>
@@ -108,12 +110,12 @@ export function RoastArena() {
       )}
 
       {/* Narration line */}
-      {NARRATION[state.phase] && (
+      {narration && (
         <p
           aria-live="polite"
           className="text-sm tracking-wide text-muted-foreground"
         >
-          {NARRATION[state.phase]}
+          {narration}
         </p>
       )}
 
@@ -157,21 +159,21 @@ export function RoastArena() {
               <AgentCard
                 key={key}
                 persona={PERSONAS[key]}
-                state={state.panelists[key]}
+                state={displayed[key]}
               />
             ))}
           </div>
           <AgentCard
             persona={PERSONAS.roast}
-            state={state.panelists.roast}
+            state={displayed.roast}
             headliner
           />
         </section>
       )}
 
-      {state.verdict && <RoastReport verdict={state.verdict} />}
+      {showVerdict && state.verdict && <RoastReport verdict={state.verdict} />}
 
-      {(state.phase === "done" || state.phase === "error") && (
+      {(showVerdict || state.phase === "error") && (
         <div>
           <button
             type="button"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   PANELISTS,
@@ -162,4 +162,124 @@ export function useRoast() {
   }, []);
 
   return { state, start, reset };
+}
+
+/**
+ * Staged reveal — agents run in parallel on the server, but take the mic one
+ * by one in the UI (plan.md: "Responses appear one by one"). Each panelist's
+ * buffered stream is typed out in stage order; the next act waits its turn.
+ */
+export const REVEAL_ORDER: PanelistKey[] = [
+  "investor",
+  "customer",
+  "competitor",
+  "roast",
+];
+
+const REVEAL_TICK_MS = 40;
+const REVEAL_CHARS_PER_TICK = 7; // ≈175 chars/sec — fast enough to feel live
+
+interface RevealState {
+  stage: number;
+  shown: Record<PanelistKey, number>;
+}
+
+const initialReveal: RevealState = {
+  stage: 0,
+  shown: { investor: 0, customer: 0, competitor: 0, roast: 0 },
+};
+
+function advanceReveal(
+  reveal: RevealState,
+  panelists: Record<PanelistKey, PanelistState>,
+): RevealState {
+  if (reveal.stage >= REVEAL_ORDER.length) return reveal;
+
+  const key = REVEAL_ORDER[reveal.stage];
+  const panelist = panelists[key];
+  const shown = reveal.shown[key];
+
+  if (shown < panelist.text.length) {
+    return {
+      ...reveal,
+      shown: {
+        ...reveal.shown,
+        [key]: Math.min(panelist.text.length, shown + REVEAL_CHARS_PER_TICK),
+      },
+    };
+  }
+  // Caught up with the buffer — hand over the mic once the server is done.
+  if (panelist.status === "done" || panelist.status === "error") {
+    return { ...reveal, stage: reveal.stage + 1 };
+  }
+  return reveal;
+}
+
+export function useStagedReveal(state: RoastState) {
+  const [reveal, setReveal] = useState(initialReveal);
+  const stateRef = useRef(state);
+
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
+  // New run or reset → rewind the show (adjust-state-during-render pattern).
+  const [prevPhase, setPrevPhase] = useState(state.phase);
+  if (prevPhase !== state.phase) {
+    setPrevPhase(state.phase);
+    if (state.phase === "triage" || state.phase === "idle") {
+      setReveal(initialReveal);
+    }
+  }
+
+  const revealDone = reveal.stage >= REVEAL_ORDER.length;
+  const running =
+    state.phase !== "idle" && state.phase !== "error" && !revealDone;
+
+  useEffect(() => {
+    if (!running) return;
+    const id = setInterval(
+      () =>
+        setReveal((prev) => advanceReveal(prev, stateRef.current.panelists)),
+      REVEAL_TICK_MS,
+    );
+    return () => clearInterval(id);
+  }, [running]);
+
+  // What each card should show right now, given whose turn it is.
+  const displayed = useMemo(() => {
+    const out = {} as Record<PanelistKey, PanelistState>;
+    REVEAL_ORDER.forEach((key, index) => {
+      const server = state.panelists[key];
+      if (index < reveal.stage) {
+        out[key] = server;
+        return;
+      }
+      if (index > reveal.stage) {
+        out[key] = {
+          status: server.status === "idle" ? "idle" : "waiting",
+          text: "",
+        };
+        return;
+      }
+      const text = server.text.slice(0, reveal.shown[key]);
+      if (text.length === 0) {
+        out[key] = {
+          status:
+            server.status === "error"
+              ? "error"
+              : server.status === "idle"
+                ? "idle"
+                : "waiting",
+          text: "",
+          error: server.error,
+        };
+        return;
+      }
+      out[key] = { status: "streaming", text };
+    });
+    return out;
+  }, [state.panelists, reveal]);
+
+  return { displayed, revealDone };
 }

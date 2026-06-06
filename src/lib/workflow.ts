@@ -18,6 +18,9 @@ const workflowOptions = {
   workflowName: "AI Startup Roast",
 } as const;
 
+// Watchdog: a hung panelist drops out instead of stalling the whole show.
+const PANELIST_TIMEOUT_MS = 45_000;
+
 function agentInput(idea: string, triage: unknown) {
   return JSON.stringify(
     {
@@ -36,7 +39,11 @@ async function runPanelist(
   emit: EmitEvent,
 ) {
   // Token-level streaming: forward each chunk as it arrives for the live-typing effect.
-  const result = await run(agent, input, { ...workflowOptions, stream: true });
+  const result = await run(agent, input, {
+    ...workflowOptions,
+    stream: true,
+    signal: AbortSignal.timeout(PANELIST_TIMEOUT_MS),
+  });
 
   let text = "";
   for await (const chunk of result.toTextStream()) {

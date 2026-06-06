@@ -109,7 +109,7 @@ export function AgentCard({ persona, state, headliner = false }: AgentCardProps)
         </p>
       )}
 
-      {(streaming || status === "done") && (
+      {(streaming || status === "done") && text && (
         <p
           className={cn(
             "whitespace-pre-wrap leading-relaxed",
@@ -119,6 +119,10 @@ export function AgentCard({ persona, state, headliner = false }: AgentCardProps)
           {text}
           {streaming && <span className="caret" aria-hidden />}
         </p>
+      )}
+
+      {status === "done" && !text && (
+        <p className="text-sm text-muted-foreground">Passed on the mic.</p>
       )}
 
       {status === "error" && (

@@ -52,44 +52,43 @@
 
 /*
  * The roast arena — one permanent theme.
- * Charred coffee blacks, warm cream text, ember accents. Nothing pure black,
- * nothing pure white, every neutral tinted toward the flame.
+ * Codex-inspired blue violets, deep ink text, and slow ambient light.
  */
 :root {
-  --background: oklch(0.16 0.013 50);
-  --foreground: oklch(0.94 0.02 85);
-  --card: oklch(0.2 0.016 48);
-  --card-foreground: oklch(0.94 0.02 85);
-  --popover: oklch(0.2 0.016 48);
-  --popover-foreground: oklch(0.94 0.02 85);
-  --primary: oklch(0.67 0.19 40);
-  --primary-foreground: oklch(0.17 0.02 45);
-  --secondary: oklch(0.26 0.022 48);
-  --secondary-foreground: oklch(0.94 0.02 85);
-  --muted: oklch(0.24 0.018 48);
-  --muted-foreground: oklch(0.66 0.03 65);
-  --accent: oklch(0.3 0.04 45);
-  --accent-foreground: oklch(0.94 0.02 85);
-  --destructive: oklch(0.62 0.21 25);
-  --border: oklch(0.94 0.02 85 / 14%);
-  --input: oklch(0.94 0.02 85 / 18%);
-  --ring: oklch(0.67 0.19 40);
-  --chart-1: oklch(0.67 0.19 40);
-  --chart-2: oklch(0.75 0.16 60);
-  --chart-3: oklch(0.62 0.21 25);
-  --chart-4: oklch(0.78 0.13 85);
-  --chart-5: oklch(0.5 0.1 35);
+  --background: oklch(0.12 0.065 266);
+  --foreground: oklch(0.96 0.014 255);
+  --card: oklch(0.2 0.062 265 / 86%);
+  --card-foreground: oklch(0.96 0.014 255);
+  --popover: oklch(0.18 0.066 266);
+  --popover-foreground: oklch(0.96 0.014 255);
+  --primary: oklch(0.68 0.15 258);
+  --primary-foreground: oklch(0.11 0.055 268);
+  --secondary: oklch(0.25 0.068 263);
+  --secondary-foreground: oklch(0.92 0.028 252);
+  --muted: oklch(0.23 0.056 264);
+  --muted-foreground: oklch(0.75 0.055 254);
+  --accent: oklch(0.5 0.15 276);
+  --accent-foreground: oklch(0.97 0.012 255);
+  --destructive: oklch(0.61 0.17 300);
+  --border: oklch(0.86 0.05 252 / 16%);
+  --input: oklch(0.86 0.05 252 / 20%);
+  --ring: oklch(0.72 0.14 255);
+  --chart-1: oklch(0.68 0.15 258);
+  --chart-2: oklch(0.6 0.17 277);
+  --chart-3: oklch(0.58 0.19 244);
+  --chart-4: oklch(0.78 0.11 238);
+  --chart-5: oklch(0.46 0.13 286);
   --radius: 0.375rem;
-  --sidebar: oklch(0.2 0.016 48);
-  --sidebar-foreground: oklch(0.94 0.02 85);
-  --sidebar-primary: oklch(0.67 0.19 40);
-  --sidebar-primary-foreground: oklch(0.17 0.02 45);
-  --sidebar-accent: oklch(0.3 0.04 45);
-  --sidebar-accent-foreground: oklch(0.94 0.02 85);
-  --sidebar-border: oklch(0.94 0.02 85 / 14%);
-  --sidebar-ring: oklch(0.67 0.19 40);
-  --ember: oklch(0.67 0.19 40);
-  --flame: oklch(0.75 0.16 60);
+  --sidebar: oklch(0.18 0.066 266);
+  --sidebar-foreground: oklch(0.96 0.014 255);
+  --sidebar-primary: oklch(0.68 0.15 258);
+  --sidebar-primary-foreground: oklch(0.11 0.055 268);
+  --sidebar-accent: oklch(0.5 0.15 276);
+  --sidebar-accent-foreground: oklch(0.96 0.014 255);
+  --sidebar-border: oklch(0.86 0.05 252 / 16%);
+  --sidebar-ring: oklch(0.72 0.14 255);
+  --ember: oklch(0.7 0.16 258);
+  --flame: oklch(0.78 0.11 238);
 }
 
 @layer base {
@@ -101,10 +100,15 @@
   }
   body {
     @apply text-foreground;
+    min-height: 100vh;
     background:
-      radial-gradient(1100px 520px at 50% -12%, oklch(0.3 0.06 45 / 60%), transparent 70%),
-      radial-gradient(900px 600px at 88% 112%, oklch(0.22 0.05 35 / 50%), transparent 65%),
+      radial-gradient(980px 520px at 16% -12%, oklch(0.62 0.14 246 / 34%), transparent 68%),
+      radial-gradient(900px 600px at 94% 4%, oklch(0.5 0.18 276 / 34%), transparent 66%),
+      radial-gradient(860px 640px at 12% 88%, oklch(0.28 0.17 259 / 72%), transparent 70%),
+      linear-gradient(180deg, oklch(0.28 0.13 252) 0%, oklch(0.2 0.12 263) 46%, oklch(0.09 0.055 266) 100%),
       var(--background);
+    background-size: 125% 125%, 120% 120%, 130% 130%, 100% 100%, auto;
+    animation: ambient-drift 16s cubic-bezier(0.22, 1, 0.36, 1) infinite alternate;
   }
   /* Faint film grain over everything — keeps the dark theme from feeling flat. */
   body::after {
@@ -144,6 +148,11 @@
   50% { box-shadow: 0 0 0 1px var(--glow-edge), 0 0 34px -6px var(--glow); }
 }
 
+@keyframes ambient-drift {
+  from { background-position: 0% 0%, 100% 0%, 0% 100%, 0% 0%, 0% 0%; }
+  to { background-position: 6% 3%, 94% 5%, 5% 92%, 0% 0%, 0% 0%; }
+}
+
 @layer utilities {
   .animate-rise {
     animation: rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -169,6 +178,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body,
   .animate-rise,
   .animate-stamp,
   .glow-streaming,
