@@ -1,12 +1,14 @@
 "use client";
 
 import type { Verdict } from "@/types/report";
+import { RoastAudio } from "./roast-audio";
 
 interface RoastReportProps {
   verdict: Verdict;
+  roastText?: string;
 }
 
-export function RoastReport({ verdict }: RoastReportProps) {
+export function RoastReport({ verdict, roastText }: RoastReportProps) {
   const survival = Math.max(
     0,
     Math.min(100, parseInt(verdict.survivalChance.replace(/[^0-9]/g, ""), 10) || 0),
@@ -59,6 +61,8 @@ export function RoastReport({ verdict }: RoastReportProps) {
           </span>
         </div>
       </div>
+
+      {roastText && <RoastAudio text={roastText} />}
     </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { AgentCard, type AgentPersona } from "@/components/agent-card";
 import { RoastReport } from "@/components/roast-report";
+import { RoastMeme } from "@/components/roast-meme";
 import { StartupForm } from "@/components/startup-form";
 import { useRoast, type Phase } from "@/hooks/use-roast";
 import type { PanelistKey } from "@/types/report";
@@ -169,7 +170,9 @@ export function RoastArena() {
         </section>
       )}
 
-      {state.verdict && <RoastReport verdict={state.verdict} />}
+      {state.verdict && <RoastReport verdict={state.verdict} roastText={state.panelists.roast.text} />}
+
+      {state.verdict && state.idea && <RoastMeme idea={state.idea} verdict={state.verdict.verdict} />}
 
       {(state.phase === "done" || state.phase === "error") && (
         <div>

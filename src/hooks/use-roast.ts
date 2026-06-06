@@ -22,6 +22,7 @@ export type Phase = "idle" | "triage" | "panel" | "judging" | "done" | "error";
 
 export interface RoastState {
   phase: Phase;
+  idea: string | null;
   triage: TriageSummary | null;
   panelists: Record<PanelistKey, PanelistState>;
   verdict: Verdict | null;
@@ -36,6 +37,7 @@ function freshPanelists(status: PanelistStatus) {
 
 const initialState: RoastState = {
   phase: "idle",
+  idea: null,
   triage: null,
   panelists: freshPanelists("idle"),
   verdict: null,
@@ -111,6 +113,7 @@ export function useRoast() {
     setState({
       ...initialState,
       phase: "triage",
+      idea,
       panelists: freshPanelists("waiting"),
     });
 
